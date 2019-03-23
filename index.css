@@ -1,0 +1,11 @@
+body {
+  background-color: #d0d0d0;
+}
+
+#myCanvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -600px; /* This is half the width */
+  margin-top: -375px; /* This is half the height */
+}
