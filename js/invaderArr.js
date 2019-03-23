@@ -80,4 +80,15 @@ class InvaderArr {
         break;
     }
   };
+  /////////////////////////////////////////////////
+  //GET LOWEST INDEX
+  getLowestIndex = () => {
+    for (let i = 0; i < this.arr.length; i++) {
+      for (let j = 0; j < this.rows; j++) {
+        if (this.arr[i][j].destroyed == false) {
+          return i;
+        }
+      }
+    }
+  };
 }

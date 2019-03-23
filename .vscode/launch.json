@@ -8,7 +8,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",
-      "url": "file:///C:/Users/Hadiz/OneDrive/Desktop/Graphics/ALPHA/index.html",
+      "url": "file:///C:/Users/Hadiz/OneDrive/Desktop/Graphics/Space-Invaders/index.html",
       "webRoot": "${workspaceFolder}"
     }
   ]
