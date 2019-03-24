@@ -1,12 +1,14 @@
 let canvas = document.getElementById("myCanvas");
+let scoreCanvas = document.getElementById("scoreCanvas");
 var width = canvas.width;
 var height = canvas.height;
 let ctx = canvas.getContext("2d");
+let scoreCtx = scoreCanvas.getContext("2d");
 
 ////////////////////////////////! KEYSDOWN
 
 this.keysDown = {};
-s = new Sprite(ctx, keysDown);
+s = new Sprite(ctx, scoreCtx, keysDown);
 addEventListener(
   "keydown",
   function(e) {

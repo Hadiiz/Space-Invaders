@@ -9,3 +9,9 @@ body {
   margin-left: -600px; /* This is half the width */
   margin-top: -375px; /* This is half the height */
 }
+
+#scoreCanvas {
+  position: absolute;
+  left: 2.2%;
+  top: 20%;
+}

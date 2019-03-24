@@ -13,7 +13,7 @@ class Invader {
     this.frameCount = 0;
     this.tickCounter = 0;
 
-    this.explCounter = 10;
+    this.explCounter = 15;
     this.explosion = new Image();
     this.explosion.src = "./img/expl.png";
   }
@@ -32,7 +32,7 @@ class Invader {
         this.imgH
       );
     } else if (this.destroyed == true && this.explCounter > 0) {
-      this.ctx.drawImage(this.explosion, dx - 10, dy - 7, 62, 46);
+      this.ctx.drawImage(this.explosion, dx - 15, dy - 10, 70, 50);
       this.explCounter--;
     }
 
