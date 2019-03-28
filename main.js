@@ -8,7 +8,7 @@ let scoreCtx = scoreCanvas.getContext("2d");
 ////////////////////////////////! KEYSDOWN
 
 this.keysDown = {};
-s = new Sprite(ctx, scoreCtx, keysDown);
+level = new Level(ctx, scoreCtx, keysDown);
 addEventListener(
   "keydown",
   function(e) {
@@ -21,15 +21,15 @@ addEventListener(
   "keyup",
   function(e) {
     delete this.keysDown[e.keyCode];
-    s.plane.fire = true;
+    // level.plane.fire = true;
   },
   false
 );
 ////////////////////////////////! KEYSDOWN
 
 main = () => {
-  s.render();
-  s.update();
+  level.render();
+  level.update();
   requestAnimationFrame(main);
 };
 
