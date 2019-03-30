@@ -21,7 +21,7 @@ addEventListener(
   "keyup",
   function(e) {
     delete this.keysDown[e.keyCode];
-    // level.plane.fire = true;
+    level.fire = true;
   },
   false
 );

@@ -3,10 +3,15 @@ class Level {
     this.ctx = ctx;
     this.scoreCtx = scoreCtx;
     this.keysdown = keysdown;
+
     this.sprite = [];
-    this.invLength = 49;
+    this.deleted = [];
+
+    this.invLength = 9;
     this.invaderDx = 0;
     this.invaderDy = 0;
+    this.invRandom = false;
+
     this.planeImg = new Image();
     this.planeImg.src = "./img/plane.png";
     this.score = 0;
@@ -15,6 +20,8 @@ class Level {
 
     this.planeX = 0;
     this.planeY = 0;
+    this.fire = true;
+
     this.generate();
   }
 
@@ -66,14 +73,55 @@ class Level {
   update = () => {
     for (let i = 0; i < this.sprite.length; i++) {
       this.sprite[i].update(this.keysdown);
+      if (this.sprite[i] instanceof Invader) {
+        this.invRandom = Math.round(Math.random() * 170) == 0;
+
+        if (this.invRandom) {
+          this.sprite.push(
+            new InvBullet(this.ctx, this.sprite[i].x1, this.sprite[i].y2)
+          );
+        }
+      }
+      if (this.sprite[i] instanceof Bullet) {
+        if (this.sprite[i].y < 0) {
+          this.deleted.push(this.sprite[i]);
+        }
+        for (let j = 0; j < this.invLength; j++) {
+          if (
+            ((this.sprite[i].y1 > this.sprite[j].y1 &&
+              this.sprite[i].y1 < this.sprite[j].y2) ||
+              (this.sprite[i].y2 > this.sprite[j].y1 &&
+                this.sprite[i].y2 < this.sprite[j].y2)) &&
+            this.sprite[i].x1 < this.sprite[j].x2 &&
+            this.sprite[i].x1 > this.sprite[j].x1
+          ) {
+            this.deleted.push(this.sprite[i]);
+            this.deleted.push(this.sprite[j]);
+            this.invLength--;
+            this.score++;
+          }
+        }
+      }
       if (this.sprite[i] instanceof Plane) {
         this.planeX = this.sprite[i].x;
         this.planeY = this.sprite[i].y;
       }
     }
-    if (32 in this.keysdown) {
-      this.sprite.push(new Bullet(this.ctx, this.planeX, this.planeY));
-      console.log(this.sprite);
+
+    for (let i = 0; i < this.deleted.length; i++) {
+      let elemet = this.deleted[i];
+      this.sprite.splice(this.sprite.indexOf(elemet), 1);
+      this.deleted.splice(this.deleted.indexOf(elemet), 1);
+      /*if (this.sprite[i] instanceof Invader) {
+        
+      }*/
+    }
+
+    if (32 in this.keysdown && this.fire == true) {
+      this.sprite.push(
+        new Bullet(this.ctx, this.planeX + 48.5, this.planeY - 10)
+      );
+      this.fire = false;
     }
   };
 
