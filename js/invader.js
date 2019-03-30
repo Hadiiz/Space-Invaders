@@ -52,8 +52,8 @@ class Invader {
     }
     switch (this.state) {
       case 1:
-        this.x1 += -this.dx * 5;
-        this.x2 += -this.dx * 5;
+        this.x1 += -this.dx * 9;
+        this.x2 += -this.dx * 9;
         if (this.x2 >= 1200 || this.x1 < 0) this.state++;
         break;
       case 2:

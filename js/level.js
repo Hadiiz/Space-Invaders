@@ -7,7 +7,7 @@ class Level {
     this.sprite = [];
     this.deleted = [];
 
-    this.invLength = 9;
+    this.invLength = 20;
     this.invaderDx = 0;
     this.invaderDy = 0;
     this.invRandom = false;
@@ -18,9 +18,19 @@ class Level {
     this.lives = 3;
     this.livesDx = 0;
 
-    this.planeX = 0;
-    this.planeY = 0;
+    this.planeX1 = 0;
+    this.planeX2 = 0;
+    this.planeY1 = 0;
+    this.planeY2 = 0;
     this.fire = true;
+    this.destroyed = false;
+
+    this.explosionImg = new Image();
+    this.explosionImg.src = "./img/explosion.png";
+    this.frameCount = 0;
+    this.tickCount = 0;
+    this.ticksPerFrame = 7;
+    this.destruction = 4;
 
     this.generate();
   }
@@ -29,7 +39,7 @@ class Level {
 
   generate = () => {
     for (let i = 0; i < this.invLength; i++) {
-      if (i % 25 == 0 && i != 0) {
+      if (i % 10 == 0 && i != 0) {
         this.invaderDy += 60;
         this.invaderDx = 0;
       }
@@ -66,6 +76,14 @@ class Level {
         this.sprite[i].render();
       }
     }
+
+    if (this.destroyed == true && this.destruction != 0) {
+      this.explode();
+    }
+    if (this.destruction == 0) {
+      this.destruction = 4;
+      this.destroyed = false;
+    }
   };
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,19 +99,22 @@ class Level {
             new InvBullet(this.ctx, this.sprite[i].x1, this.sprite[i].y2)
           );
         }
-      }
-      if (this.sprite[i] instanceof Bullet) {
+      } else if (this.sprite[i] instanceof Bullet) {
         if (this.sprite[i].y < 0) {
           this.deleted.push(this.sprite[i]);
         }
         for (let j = 0; j < this.invLength; j++) {
           if (
-            ((this.sprite[i].y1 > this.sprite[j].y1 &&
-              this.sprite[i].y1 < this.sprite[j].y2) ||
-              (this.sprite[i].y2 > this.sprite[j].y1 &&
-                this.sprite[i].y2 < this.sprite[j].y2)) &&
-            this.sprite[i].x1 < this.sprite[j].x2 &&
-            this.sprite[i].x1 > this.sprite[j].x1
+            this.collide(
+              this.sprite[i].x1,
+              this.sprite[i].x2,
+              this.sprite[i].y1,
+              this.sprite[i].y2,
+              this.sprite[j].x1,
+              this.sprite[j].x2,
+              this.sprite[j].y1,
+              this.sprite[j].y2
+            )
           ) {
             this.deleted.push(this.sprite[i]);
             this.deleted.push(this.sprite[j]);
@@ -101,29 +122,85 @@ class Level {
             this.score++;
           }
         }
-      }
-      if (this.sprite[i] instanceof Plane) {
-        this.planeX = this.sprite[i].x;
-        this.planeY = this.sprite[i].y;
+      } else if (this.sprite[i] instanceof Plane) {
+        this.planeX1 = this.sprite[i].x1;
+        this.planeX2 = this.sprite[i].x2;
+        this.planeY1 = this.sprite[i].y1;
+        this.planeY2 = this.sprite[i].y2;
+      } else if (this.sprite[i] instanceof InvBullet) {
+        if (this.sprite[i].y2 > 800) {
+          this.deleted.push(this.sprite[i]);
+        }
+        if (
+          this.collide(
+            this.sprite[i].x1,
+            this.sprite[i].x2,
+            this.sprite[i].y1,
+            this.sprite[i].y2,
+            this.planeX1,
+            this.planeX2,
+            this.planeY1,
+            this.planeY2
+          ) &&
+          this.destroyed == false
+        ) {
+          this.lives--;
+          this.destroyed = true;
+        }
       }
     }
 
     for (let i = 0; i < this.deleted.length; i++) {
-      let elemet = this.deleted[i];
-      this.sprite.splice(this.sprite.indexOf(elemet), 1);
-      this.deleted.splice(this.deleted.indexOf(elemet), 1);
-      /*if (this.sprite[i] instanceof Invader) {
-        
-      }*/
+      let element = this.deleted[i];
+      this.sprite.splice(this.sprite.indexOf(element), 1);
+      this.deleted.splice(this.deleted.indexOf(element), 1);
     }
 
     if (32 in this.keysdown && this.fire == true) {
       this.sprite.push(
-        new Bullet(this.ctx, this.planeX + 48.5, this.planeY - 10)
+        new Bullet(this.ctx, this.planeX1 + 48.5, this.planeY1 - 10)
       );
       this.fire = false;
     }
   };
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  collide = (x1, x2, y1, y2, x3, x4, y3, y4) => {
+    if (
+      ((x1 < x4 && x1 > x3) || (x2 < x4 && x2 > x3)) &&
+      ((y1 < y4 && y1 > y3) || (y2 < y4 && y2 > y3))
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  explode = () => {
+    this.ctx.drawImage(
+      this.explosionImg,
+      this.frameCount * 96,
+      0,
+      96,
+      96,
+      this.planeX1 - 25,
+      this.planeY1 - 25,
+      150,
+      150
+    );
+    this.tickCount++;
+    if (this.tickCount > this.ticksPerFrame) {
+      this.tickCount = 0;
+      this.frameCount++;
+      this.frameCount = this.frameCount % 12;
+      if (this.frameCount % 12 == 0) {
+        this.destruction--;
+      }
+    }
+    this.fire = false;
+
+    console.log(this.destruction);
+  };
 }
