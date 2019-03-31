@@ -94,7 +94,7 @@ class Level {
         this.sprite[i].update(this.lives);
         this.invRandom = Math.round(Math.random() * 170) == 0;
 
-        if (this.invRandom) {
+        if (this.invRandom && this.lives > 0) {
           this.sprite.push(
             new InvBullet(this.ctx, this.sprite[i].x1, this.sprite[i].y2)
           );
