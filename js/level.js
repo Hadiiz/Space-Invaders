@@ -7,7 +7,7 @@ class Level {
     this.sprite = [];
     this.deleted = [];
 
-    this.invLength = 20;
+    this.invLength = 2;
     this.invaderDx = 0;
     this.invaderDy = 0;
     this.invRandom = false;
@@ -49,6 +49,20 @@ class Level {
     this.sprite.push(new Plane(this.ctx, 550, 656.25));
   };
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  newLevel = () => {
+    for (let i = 0; i < this.invLength; i++) {
+      if (i % 10 == 0 && i != 0) {
+        this.invaderDy += 60;
+        this.invaderDx = 0;
+      }
+      this.sprite.unshift(
+        new Invader(this.ctx, this.invaderDx, this.invaderDy)
+      );
+      this.invaderDx += 80;
+    }
+  };
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   render = () => {
@@ -168,6 +182,12 @@ class Level {
     if (this.lives <= 0) {
       setInterval(this.gameOver(), 200);
     }
+    if (this.invLength == 0) {
+      this.test = true;
+      66;
+      this.invLength = 2;
+      this.newLevel();
+    }
   };
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,9 +226,9 @@ class Level {
       }
     }
     this.fire = false;
-
-    console.log(this.destruction);
   };
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   gameOver = () => {
     this.ctx.fillStyle = "orange";
