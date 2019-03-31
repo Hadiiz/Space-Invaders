@@ -55,7 +55,7 @@ class Level {
     this.scoreCtx.fillStyle = "black";
     this.scoreCtx.fillRect(0, 0, scoreCanvas.width, scoreCanvas.height);
     this.scoreCtx.fillStyle = "white";
-    this.scoreCtx.font = "25px monospace";
+    this.scoreCtx.font = "25px Orbitron";
     this.scoreCtx.fillText("Score: " + this.score, 10, 50);
     this.scoreCtx.fillText("Lives: ", 10, 100);
 
@@ -90,8 +90,8 @@ class Level {
 
   update = () => {
     for (let i = 0; i < this.sprite.length; i++) {
-      this.sprite[i].update(this.keysdown);
       if (this.sprite[i] instanceof Invader) {
+        this.sprite[i].update(this.lives);
         this.invRandom = Math.round(Math.random() * 170) == 0;
 
         if (this.invRandom) {
@@ -100,6 +100,7 @@ class Level {
           );
         }
       } else if (this.sprite[i] instanceof Bullet) {
+        this.sprite[i].update(this.keysdown);
         if (this.sprite[i].y < 0) {
           this.deleted.push(this.sprite[i]);
         }
@@ -123,11 +124,13 @@ class Level {
           }
         }
       } else if (this.sprite[i] instanceof Plane) {
+        this.sprite[i].update(this.keysdown, this.lives);
         this.planeX1 = this.sprite[i].x1;
         this.planeX2 = this.sprite[i].x2;
         this.planeY1 = this.sprite[i].y1;
         this.planeY2 = this.sprite[i].y2;
       } else if (this.sprite[i] instanceof InvBullet) {
+        this.sprite[i].update(this.keysdown);
         if (this.sprite[i].y2 > 800) {
           this.deleted.push(this.sprite[i]);
         }
@@ -156,11 +159,14 @@ class Level {
       this.deleted.splice(this.deleted.indexOf(element), 1);
     }
 
-    if (32 in this.keysdown && this.fire == true) {
+    if (32 in this.keysdown && this.fire == true && this.lives > 0) {
       this.sprite.push(
         new Bullet(this.ctx, this.planeX1 + 48.5, this.planeY1 - 10)
       );
       this.fire = false;
+    }
+    if (this.lives <= 0) {
+      setInterval(this.gameOver(), 200);
     }
   };
 
@@ -202,5 +208,11 @@ class Level {
     this.fire = false;
 
     console.log(this.destruction);
+  };
+
+  gameOver = () => {
+    this.ctx.fillStyle = "orange";
+    this.ctx.font = "100px Orbitron";
+    this.ctx.fillText("GAME OVER", 250, 400);
   };
 }

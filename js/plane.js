@@ -15,14 +15,16 @@ class Plane {
     this.context.drawImage(this.planeImg, this.x1, this.y1, 100, 90);
   };
 
-  update = function(keysdown) {
-    if (65 in keysdown && this.x1 > 0) {
-      this.x1 -= 5;
-      this.x2 -= 5;
-    }
-    if (68 in keysdown && this.x1 + 100 < 1200) {
-      this.x1 += 5;
-      this.x2 += 5;
+  update = function(keysdown, lives) {
+    if (lives > 0) {
+      if (65 in keysdown && this.x1 > 0) {
+        this.x1 -= 5;
+        this.x2 -= 5;
+      }
+      if (68 in keysdown && this.x1 + 100 < 1200) {
+        this.x1 += 5;
+        this.x2 += 5;
+      }
     }
   };
 }

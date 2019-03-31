@@ -43,27 +43,29 @@ class Invader {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  update = () => {
+  update = lives => {
     this.tickCounter++;
     if (this.tickCounter > this.ticksPerFrame) {
       this.tickCounter = 0;
       this.frameCount++;
       this.frameCount = this.frameCount % 2;
     }
-    switch (this.state) {
-      case 1:
-        this.x1 += -this.dx * 9;
-        this.x2 += -this.dx * 9;
-        if (this.x2 >= 1200 || this.x1 < 0) this.state++;
-        break;
-      case 2:
-        this.y1 += 5;
-        this.y2 += 5;
-        if (this.y2 >= this.dy) {
-          this.state--;
-          this.dx *= -1;
-          this.dy += 30;
-        }
+    if (lives > 0) {
+      switch (this.state) {
+        case 1:
+          this.x1 += -this.dx * 9;
+          this.x2 += -this.dx * 9;
+          if (this.x2 >= 1200 || this.x1 < 0) this.state++;
+          break;
+        case 2:
+          this.y1 += 5;
+          this.y2 += 5;
+          if (this.y2 >= this.dy) {
+            this.state--;
+            this.dx *= -1;
+            this.dy += 30;
+          }
+      }
     }
   };
 }
