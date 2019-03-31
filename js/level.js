@@ -3,14 +3,17 @@ class Level {
     this.ctx = ctx;
     this.scoreCtx = scoreCtx;
     this.keysdown = keysdown;
+    this.levelMusic = new Audio("./audio/level.mp3");
 
     this.sprite = [];
     this.deleted = [];
 
-    this.invLength = 2;
+    this.invLength = 7;
     this.invaderDx = 0;
     this.invaderDy = 0;
     this.invRandom = false;
+    this.invBullet = new Audio("./audio/InvaderBullet.mp3");
+    this.invBullet.volume = 0.2;
 
     this.planeImg = new Image();
     this.planeImg.src = "./img/plane.png";
@@ -23,10 +26,14 @@ class Level {
     this.planeY1 = 0;
     this.planeY2 = 0;
     this.fire = true;
+    this.bulletSound = new Audio("./audio/ShipBullet.mp3");
+    this.bulletSound.volume = 0.2;
     this.destroyed = false;
 
     this.explosionImg = new Image();
     this.explosionImg.src = "./img/explosion.png";
+    this.explosionSound = new Audio("./audio/explosion.mp3");
+    this.explosionSound.volume = 0.2;
     this.frameCount = 0;
     this.tickCount = 0;
     this.ticksPerFrame = 7;
@@ -103,6 +110,7 @@ class Level {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   update = () => {
+    this.levelMusic.play();
     for (let i = 0; i < this.sprite.length; i++) {
       if (this.sprite[i] instanceof Invader) {
         this.sprite[i].update(this.lives);
@@ -112,6 +120,7 @@ class Level {
           this.sprite.push(
             new InvBullet(this.ctx, this.sprite[i].x1, this.sprite[i].y2)
           );
+          this.invBullet.play();
         }
       } else if (this.sprite[i] instanceof Bullet) {
         this.sprite[i].update(this.keysdown);
@@ -177,6 +186,8 @@ class Level {
       this.sprite.push(
         new Bullet(this.ctx, this.planeX1 + 48.5, this.planeY1 - 10)
       );
+      this.bulletSound.play();
+
       this.fire = false;
     }
     if (this.lives <= 0) {
@@ -226,6 +237,7 @@ class Level {
       }
     }
     this.fire = false;
+    this.explosionSound.play();
   };
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
