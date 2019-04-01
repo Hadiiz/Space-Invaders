@@ -14,6 +14,7 @@ class Level {
     this.invRandom = false;
     this.invBullet = new Audio("./audio/InvaderBullet.mp3");
     this.invBullet.volume = 0.2;
+    this.invSpeed = 1;
 
     this.planeImg = new Image();
     this.planeImg.src = "./img/plane.png";
@@ -39,6 +40,8 @@ class Level {
     this.ticksPerFrame = 7;
     this.destruction = 4;
 
+    this.endGame = false;
+
     this.generate();
   }
 
@@ -50,7 +53,9 @@ class Level {
         this.invaderDy += 60;
         this.invaderDx = 0;
       }
-      this.sprite.push(new Invader(this.ctx, this.invaderDx, this.invaderDy));
+      this.sprite.push(
+        new Invader(this.ctx, this.invaderDx, this.invaderDy, this.invSpeed)
+      );
       this.invaderDx += 80;
     }
     this.sprite.push(new Plane(this.ctx, 550, 656.25));
@@ -59,13 +64,16 @@ class Level {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   newLevel = () => {
+    this.invaderDx = 0;
+    this.invaderDy = 0;
+    this.invSpeed++;
     for (let i = 0; i < this.invLength; i++) {
       if (i % 10 == 0 && i != 0) {
         this.invaderDy += 60;
         this.invaderDx = 0;
       }
       this.sprite.unshift(
-        new Invader(this.ctx, this.invaderDx, this.invaderDy)
+        new Invader(this.ctx, this.invaderDx, this.invaderDy, this.invSpeed)
       );
       this.invaderDx += 80;
     }
@@ -113,14 +121,18 @@ class Level {
     this.levelMusic.play();
     for (let i = 0; i < this.sprite.length; i++) {
       if (this.sprite[i] instanceof Invader) {
-        this.sprite[i].update(this.lives);
+        this.sprite[i].update(this.lives, this.endGame);
         this.invRandom = Math.round(Math.random() * 170) == 0;
-
-        if (this.invRandom && this.lives > 0) {
+        if (this.invRandom && this.lives > 0 && this.endGame == false) {
           this.sprite.push(
             new InvBullet(this.ctx, this.sprite[i].x1, this.sprite[i].y2)
           );
           this.invBullet.play();
+          console.log(this.sprite[i].y2);
+          console.log(this.planeY1);
+          if (this.sprite[i].y2 >= this.planeY1) {
+            this.endGame = true;
+          }
         }
       } else if (this.sprite[i] instanceof Bullet) {
         this.sprite[i].update(this.keysdown);
@@ -147,7 +159,7 @@ class Level {
           }
         }
       } else if (this.sprite[i] instanceof Plane) {
-        this.sprite[i].update(this.keysdown, this.lives);
+        this.sprite[i].update(this.keysdown, this.lives, this.endGame);
         this.planeX1 = this.sprite[i].x1;
         this.planeX2 = this.sprite[i].x2;
         this.planeY1 = this.sprite[i].y1;
@@ -182,7 +194,12 @@ class Level {
       this.deleted.splice(this.deleted.indexOf(element), 1);
     }
 
-    if (32 in this.keysdown && this.fire == true && this.lives > 0) {
+    if (
+      32 in this.keysdown &&
+      this.fire == true &&
+      this.lives > 0 &&
+      this.endGame == false
+    ) {
       this.sprite.push(
         new Bullet(this.ctx, this.planeX1 + 48.5, this.planeY1 - 10)
       );
@@ -190,13 +207,12 @@ class Level {
 
       this.fire = false;
     }
-    if (this.lives <= 0) {
+    if (this.lives <= 0 || this.endGame) {
       setInterval(this.gameOver(), 200);
     }
     if (this.invLength == 0) {
-      this.test = true;
       66;
-      this.invLength = 2;
+      this.invLength = 8;
       this.newLevel();
     }
   };

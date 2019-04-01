@@ -1,5 +1,5 @@
 class Invader {
-  constructor(ctx, x1, y1) {
+  constructor(ctx, x1, y1, speed) {
     this.ctx = ctx;
     this.imgW = 48;
     this.imgH = 36;
@@ -9,6 +9,7 @@ class Invader {
     this.y1 = y1;
     this.y2 = this.y1 + this.imgH;
     this.dy = 70 + this.y1;
+    this.speed = speed;
     this.state = 1;
     this.destroyed = false;
     this.ticksPerFrame = 45;
@@ -43,18 +44,18 @@ class Invader {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  update = lives => {
+  update = (lives, endGame) => {
     this.tickCounter++;
     if (this.tickCounter > this.ticksPerFrame) {
       this.tickCounter = 0;
       this.frameCount++;
       this.frameCount = this.frameCount % 2;
     }
-    if (lives > 0) {
+    if (lives > 0 && endGame == false) {
       switch (this.state) {
         case 1:
-          this.x1 += -this.dx * 9;
-          this.x2 += -this.dx * 9;
+          this.x1 += -this.dx * this.speed;
+          this.x2 += -this.dx * this.speed;
           if (this.x2 >= 1200 || this.x1 < 0) this.state++;
           break;
         case 2:

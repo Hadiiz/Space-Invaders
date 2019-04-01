@@ -19,8 +19,8 @@ class Plane {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  update = function(keysdown, lives) {
-    if (lives > 0) {
+  update = function(keysdown, lives, endGame) {
+    if (lives > 0 && endGame == false) {
       if (65 in keysdown && this.x1 > 0) {
         this.x1 -= 5;
         this.x2 -= 5;
